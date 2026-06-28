@@ -1,0 +1,65 @@
+<?php
+session_start();
+?>
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Mini PHP API</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<!-- Apna registered email yahan likho -->
+<!-- pritamkumarpe1508@gmail.com -->
+
+<div class="container">
+    <h1>Mini PHP API Demo</h1>
+
+    <form method="GET">
+        <label>Enter a Number:</label>
+        <input type="number" name="number" required>
+        <button type="submit">Calculate Square</button>
+    </form>
+
+<?php
+if(isset($_GET['number'])){
+
+    try{
+
+        $number = urlencode($_GET['number']);
+
+        $url = "http://localhost/mini-api/api/square.php?number=".$number;
+
+        $response = file_get_contents($url);
+
+        if($response === FALSE){
+            throw new Exception("API not available.");
+        }
+
+        $data = json_decode($response,true);
+
+        if(!$data){
+            throw new Exception("Invalid JSON received.");
+        }
+
+        $cleanInput = htmlspecialchars($_GET['number']);
+
+        echo "<h3>Result</h3>";
+        echo "<p>Input: ".$cleanInput."</p>";
+        echo "<p>Square: ".$data['square']."</p>";
+
+    }catch(Exception $e){
+
+        echo "<div class='error'>";
+        echo "Sorry! Something went wrong.<br>";
+        echo htmlspecialchars($e->getMessage());
+        echo "</div>";
+    }
+}
+?>
+
+</div>
+
+</body>
+</html>
